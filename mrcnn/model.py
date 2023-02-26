@@ -2870,13 +2870,14 @@ def denorm_boxes_graph(boxes, shape):
 
 
 
+
 ############################################################
 #  Custom Callbacks
 ############################################################
 
 class MeanAveragePrecisionCallback(Callback):
-    def __init__(self, train_model, inference_model, dataset,
-                 calculate_map_at_every_X_epoch, dataset_limit=None,
+    def __init__(self, train_model: MaskRCNN, inference_model: MaskRCNN, dataset,
+                 calculate_map_at_every_X_epoch=2, dataset_limit=None,
                  verbose=1):
         super().__init__()
         self.train_model = train_model
@@ -2895,19 +2896,17 @@ class MeanAveragePrecisionCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
 
-        # if epoch > 2 and (epoch+1)%self.calculate_map_at_every_X_epoch == 0:
-        self._verbose_print("Calculating mAP...")
-        self._load_weights_for_model()
+        if epoch > 2 and (epoch+1)%self.calculate_map_at_every_X_epoch == 0:
+            self._verbose_print("Calculating mAP...")
+            self._load_weights_for_model()
 
-        mAPs = self._calculate_mean_average_precision()
-        mAP = np.mean(mAPs)
+            mAPs = self._calculate_mean_average_precision()
+            mAP = np.mean(mAPs)
 
-        self._verbose_print(mAP)
+            if logs is not None:
+                logs["val_mean_average_precision"] = mAP
 
-        if logs is not None:
-            logs["val_mean_average_precision"] = mAP
-
-        self._verbose_print("mAP at epoch {0} is: {1}".format(epoch+1, mAP))
+            self._verbose_print("mAP at epoch {0} is: {1}".format(epoch+1, mAP))
 
         super().on_epoch_end(epoch, logs)
 
