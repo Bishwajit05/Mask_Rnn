@@ -2896,17 +2896,17 @@ class MeanAveragePrecisionCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
 
-        if epoch > 2 and (epoch+1)%self.calculate_map_at_every_X_epoch == 0:
-            self._verbose_print("Calculating mAP...")
-            self._load_weights_for_model()
+        # if epoch > 2 and (epoch+1)%self.calculate_map_at_every_X_epoch == 0:
+        self._verbose_print("Calculating mAP...")
+        self._load_weights_for_model()
 
-            mAPs = self._calculate_mean_average_precision()
-            mAP = np.mean(mAPs)
+        mAPs = self._calculate_mean_average_precision()
+        mAP = np.mean(mAPs)
 
-            if logs is not None:
-                logs["val_mean_average_precision"] = mAP
+        if logs is not None:
+            logs["val_mean_average_precision"] = mAP
 
-            self._verbose_print("mAP at epoch {0} is: {1}".format(epoch+1, mAP))
+        self._verbose_print("mAP at epoch {0} is: {1}".format(epoch+1, mAP))
 
         super().on_epoch_end(epoch, logs)
 
@@ -2926,8 +2926,8 @@ class MeanAveragePrecisionCallback(Callback):
         for image_id in self.dataset_image_ids[:self.dataset_limit]:
             image, image_meta, gt_class_id, gt_bbox, gt_mask = load_image_gt(self.dataset, self.inference_model.config,
                                                                              image_id, use_mini_mask=False)
-            molded_images = np.expand_dims(mold_image(image, self.inference_model.config), 0)
-            results = self.inference_model.detect(molded_images, verbose=0)
+            # molded_images = np.expand_dims(mold_image(image, self.inference_model.config), 0)
+            results = self.inference_model.detect([image])
             r = results[0]
             # Compute mAP - VOC uses IoU 0.5
             AP, _, _, _ = utils.compute_ap(gt_bbox, gt_class_id, gt_mask, r["rois"],
