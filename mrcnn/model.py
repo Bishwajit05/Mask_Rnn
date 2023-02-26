@@ -2338,15 +2338,15 @@ class MaskRCNN():
 
         # Callbacks
         callbacks = [
-            keras.callbacks.TensorBoard(log_dir=self.log_dir,
-                                        histogram_freq=0, write_graph=True, write_images=False),
+            keras.callbacks.TensorBoard(log_dir=self.log_dir,histogram_freq=0, write_graph=True, write_images=False),
+            keras.callbacks.ModelCheckpoint(self.checkpoint_path,verbose=0, save_weights_only=True)
             
         ]
 
         # Add custom callbacks to the list
         if custom_callbacks:
             callbacks += custom_callbacks
-        callbacks.append(keras.callbacks.ModelCheckpoint(self.checkpoint_path,verbose=0, save_weights_only=True))
+        
 
         # Train
         log("\nStarting at epoch {}. LR={}\n".format(self.epoch, learning_rate))
@@ -2877,7 +2877,7 @@ def denorm_boxes_graph(boxes, shape):
 
 class MeanAveragePrecisionCallback(Callback):
     def __init__(self, train_model: MaskRCNN, inference_model: MaskRCNN, dataset,
-                 calculate_map_at_every_X_epoch=2, dataset_limit=None,
+                 calculate_map_at_every_X_epoch, dataset_limit=None,
                  verbose=1):
         super().__init__()
         self.train_model = train_model
