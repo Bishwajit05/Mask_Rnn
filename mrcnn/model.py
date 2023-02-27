@@ -2876,7 +2876,7 @@ def denorm_boxes_graph(boxes, shape):
 ############################################################
 
 class MeanAveragePrecisionCallback(Callback):
-    def __init__(self, train_model: MaskRCNN, inference_model: MaskRCNN, dataset,
+    def __init__(self, train_model, inference_model, dataset,
                  calculate_map_at_every_X_epoch, dataset_limit=None,
                  verbose=1):
         super().__init__()
